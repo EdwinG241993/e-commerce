@@ -1,38 +1,40 @@
-// Express import
-const express = require('express');
-
-// Creating an instance of Express
-const app = express();
-
-// Importing the Express router
-const router = express.Router();
-
-// Port on which the server will listen
-const port = 3000;
-
-
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+import path from 'path';
 const mongoose = require('mongoose');
 
+const app = express();
 
-// Setting the database connection URL.
-// If a DB_URL environment variable exists, we use it; otherwise, we use a local connection string.
-const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/mi_base_de_datos';
+const uri = 'mongodb://localhost:27017/ecommercebd';
 
-// Connecting to the MongoDB database using Mongoose.
-// We use useNewUrlParser and useUnifiedTopology to avoid deprecation warnings.
-mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        // If the connection is successful, we display a success 
-        console.log("Conexión a la base de datos exitosa");
-    })
-    .catch((error) => {
-        // If there is an error connecting, we display an error message with the error description.
-        console.error("Error al conectar a la base de datos:", error);
-    });
+// Or using promises
+mongoose.connect(uri).then(
+    /** ready to use. The `mongoose.connect()` promise resolves to mongoose instance. */
+    () => { console.log('Conectado a DB Mongoose') },
+    /** handle initial connection error */
+    err => { console.log(err) }
+);
 
+// Middleware
+app.use(morgan('tiny'));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
 
-// Express server initialization
-app.listen(port, () => {
-    // Print a message to the console when the server initializes successfully
-    console.log(`Servidor escuchando en el puerto ${port}`);
+// Rutas
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+app.use('/api', require('./routes/product'));
+
+// Middleware para Vue.js router modo history
+const history = require('connect-history-api-fallback');
+app.use(history());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('puerto', process.env.PORT || 3000);
+app.listen(app.get('puerto'), () => {
+    console.log('App escuchando desde el puerto ' + app.get('puerto'));
 });
