@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const uri = 'mongodb://localhost:27017/ecommercebd';
 
 // Or using promises
@@ -24,9 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 app.use('/api', require('./routes/product'));
 
 // Middleware para Vue.js router modo history

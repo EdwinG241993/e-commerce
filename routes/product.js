@@ -1,6 +1,9 @@
 import express from 'express';
 const router = express.Router();
 import multer from 'multer';
+const fs = require('fs');
+const path = require('path');
+const uploadsDir = path.resolve(__dirname, '../');
 
 // Import model Product
 import Product from '../models/product';
@@ -48,10 +51,15 @@ router.post('/new-product', upload.array('fotos', 4), async (req, res) => {
         const productDB = await Product.create(body);
         res.status(200).json(productDB);
     } catch (error) {
-        return res.status(500).json({
-            mensaje: 'Ocurrió un error al crear el producto',
-            error: error.message || error
-        });
+        if (error.name === 'ValidationError') {
+            const validationErrors = {};
+            for (let field in error.errors) {
+                validationErrors[field] = error.errors[field].message;
+            }
+            res.status(400).send({ errors: validationErrors });
+        } else {
+            res.status(500).send({ message: 'Error al crear el producto' });
+        }
     }
 });
 
@@ -90,13 +98,32 @@ router.get('/product', async (req, res) => {
 // Delete product
 router.delete('/product/:id', async (req, res) => {
     const _id = req.params.id;
+    console.log(_id);
     try {
-        const productDB = await Product.findByIdAndDelete(_id);
+        const productDB = await Product.findById(_id);
+
         if (!productDB) {
             return res.status(404).json({
                 mensaje: 'No se encontró el producto indicado'
             });
         }
+        console.log(productDB.fotos);
+        // Elimina los archivos asociados
+        if (productDB.fotos && productDB.fotos.length > 0 && productDB.fotos[0] != 'uploads/default1.jpg') {
+            productDB.fotos.forEach(foto => {
+                const filePath = path.join(uploadsDir, foto);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error(`Error al eliminar el archivo ${foto}:`, err);
+                    } else {
+                        console.log(`Archivo ${foto} eliminado con éxito.`);
+                    }
+                });
+            });
+        }
+
+        await Product.findByIdAndDelete(_id);
+
         res.json({ mensaje: 'Producto eliminado con éxito' });
     } catch (error) {
         return res.status(400).json({
@@ -131,10 +158,15 @@ router.put('/product/:id', upload.array('fotos', 4), async (req, res) => {
         console.log(productDB);
         res.json(productDB);
     } catch (error) {
-        return res.status(400).json({
-            mensaje: 'Ocurrió un error al actualizar el producto',
-            error: error.message || error
-        });
+        if (error.name === 'ValidationError') {
+            const validationErrors = {};
+            for (let field in error.errors) {
+                validationErrors[field] = error.errors[field].message;
+            }
+            res.status(400).send({ errors: validationErrors });
+        } else {
+            res.status(500).send({ message: 'Error al actualizar el producto' });
+        }
     }
 });
 
