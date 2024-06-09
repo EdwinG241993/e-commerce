@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkfront_e_commerce"]=self["webpackChunkfront_e_commerce"]||[]).push([[594],{603:function(e,n,r){r.r(n),r.d(n,{default:function(){return l}});var t=r(641);const u={class:"about"},c=(0,t.Lk)("h1",null,"This is an about page",-1),a=[c];function o(e,n){return(0,t.uX)(),(0,t.CE)("div",u,a)}var s=r(262);const f={},i=(0,s.A)(f,[["render",o]]);var l=i}}]);
+//# sourceMappingURL=about.fde2520a.js.map

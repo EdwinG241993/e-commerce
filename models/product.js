@@ -10,23 +10,25 @@ const productSchema = new Schema({
     },
     nombre: {
         type: String,
+        required: [true, 'Nombre obligatorio'],
         match: [/^[a-zA-Z0-9]+(?:\s[a-zA-Z0-9]+)*$/, 'El nombre solo puede contener letras y números']
     },
     precio: {
         type: Number,
-        required: [true, 'El precio es obligatorio']
+        required: [true, 'Precio obligatorio']
     },
     categoria: {
         type: String,
+        required: [true, 'Categoria obligatorio'],
         match: [/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/, 'La categoría solo puede contener letras']
     },
     fotos: {
         type: [String],
         default: [
             'uploads/default1.jpg',
-            'uploads/default2.jpg',
-            'uploads/default3.jpg',
-            'uploads/default4.jpg']
+            'uploads/default1.jpg',
+            'uploads/default1.jpg',
+            'uploads/default1.jpg']
     },
     date: {
         type: Date,
