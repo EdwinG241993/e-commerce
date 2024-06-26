@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
@@ -40,7 +41,7 @@ const productSchema = new Schema({
     },
 });
 
-// Convert a modelo
+// Convert to modelo
 const Product = mongoose.model('Product', productSchema);
 
 export default Product;
