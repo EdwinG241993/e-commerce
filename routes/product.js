@@ -1,12 +1,12 @@
 import express from 'express';
-const router = express.Router();
 import multer from 'multer';
+import Product from '../models/product';
+
+const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const { verificarAuth, verificaRol } = require('../middlewares/autenticacion.js');
 const uploadsDir = path.resolve(__dirname, '../');
-
-// Import model Product
-import Product from '../models/product';
 
 // Configure multer file uploads
 const storage = multer.diskStorage({
@@ -38,7 +38,7 @@ const upload = multer({
 });
 
 // Add producto
-router.post('/new-product', upload.array('fotos', 4), async (req, res) => {
+router.post('/new-product', [verificarAuth, verificaRol], upload.array('fotos', 4), async (req, res) => {
     const body = req.body;
     const files = req.files;
 
@@ -96,7 +96,7 @@ router.get('/product', async (req, res) => {
 });
 
 // Delete product
-router.delete('/product/:id', async (req, res) => {
+router.delete('/product/:id', [verificarAuth, verificaRol], async (req, res) => {
     const _id = req.params.id;
     console.log(_id);
     try {
@@ -134,7 +134,7 @@ router.delete('/product/:id', async (req, res) => {
 });
 
 // Update product
-router.put('/product/:id', upload.array('fotos', 4), async (req, res) => {
+router.put('/product/:id', [verificarAuth, verificaRol], upload.array('fotos', 4), async (req, res) => {
     const _id = req.params.id;
     const body = req.body;
     const files = req.files;

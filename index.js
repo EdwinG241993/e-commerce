@@ -2,8 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
-const mongoose = require('mongoose');
 
+const mongoose = require('mongoose');
 const app = express();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -23,10 +23,11 @@ app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas
 app.use('/api', require('./routes/product'));
+app.use('/api', require('./routes/user'));
+app.use('/api', require('./routes/login'));
 
 // Middleware para Vue.js router modo history
 const history = require('connect-history-api-fallback');
