@@ -12,7 +12,7 @@ const productSchema = new Schema({
     nombre: {
         type: String,
         required: [true, 'Nombre obligatorio'],
-        match: [/^[a-zA-Z0-9]+(?:\s[a-zA-Z0-9]+)*$/, 'El nombre solo puede contener letras y números']
+        match: [/^[a-zA-Z0-9.\_\-\+\[\]]+(?:\s[a-zA-Z0-9.\_\-\+\[\]]+)*$/, 'El nombre solo puede contener letras y números']
     },
     precio: {
         type: Number,

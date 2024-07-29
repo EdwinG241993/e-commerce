@@ -51,6 +51,7 @@ router.post('/new-product', [verificarAuth, verificaRol], upload.array('fotos', 
         const productDB = await Product.create(body);
         res.status(200).json(productDB);
     } catch (error) {
+        console.log(error);
         if (error.name === 'ValidationError') {
             const validationErrors = {};
             for (let field in error.errors) {
