@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkfront_e_commerce"]=self["webpackChunkfront_e_commerce"]||[]).push([[594],{6262:function(n,t){t.A=(n,t)=>{const c=n.__vccOpts||n;for(const[e,r]of t)c[e]=r;return c}},603:function(n,t,c){c.r(t),c.d(t,{default:function(){return l}});var e=c(641);const r={class:"about"},o=(0,e.Lk)("h1",null,"This is an about page",-1),u=[o];function s(n,t){return(0,e.uX)(),(0,e.CE)("div",r,u)}var a=c(6262);const f={},i=(0,a.A)(f,[["render",s]]);var l=i}}]);
+//# sourceMappingURL=about.238e4980.js.map
