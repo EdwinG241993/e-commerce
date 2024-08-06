@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import sharp from 'sharp';
 import Product from '../models/product';
 
 const router = express.Router();
@@ -7,16 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { verificarAuth, verificaRol } = require('../middlewares/autenticacion.js');
 const uploadsDir = path.resolve(__dirname, '../');
-
-// Configure multer file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage: storage,
@@ -43,8 +35,35 @@ router.post('/new-product', [verificarAuth, verificaRol], upload.array('fotos', 
     const files = req.files;
 
     if (files && files.length > 0) {
-        const fotos = files.map(file => file.path);
-        body.fotos = fotos;
+        const resizedFotos = await Promise.all(
+            files.map(async (file) => {
+                // Generate unique, human-readable resized file names
+                const timestamp = Date.now();
+                const resizedFileName = `${timestamp}-${file.originalname}`;
+
+                // Create a path to the resized image in the 'uploads/resized' directory
+                const resizedPath = path.join('uploads', resizedFileName);
+
+                try {
+                    // Resize the image using Sharp
+                    await sharp(file.buffer)
+                        .resize(300, 250, {
+                            fit: sharp.fit.contain, // Resize the image to fit, adding padding.
+                            background: { r: 255, g: 255, b: 255, alpha: 1 }, // White backgroud
+                        }) // Adjust dimensions as needed
+                        .toFile(resizedPath);
+
+                    // Return the path to the resized image
+                    return resizedPath;
+                } catch (error) {
+                    console.error(`Error resizing image ${file.originalname}:`, error);
+                    // Handle errors gracefully, e.g., log the error and provide user feedback
+                    throw new Error('Error processing image(s). Please try again.');
+                }
+            })
+        );
+
+        body.fotos = resizedFotos; // Update the 'fotos' property with resized image paths
     }
 
     try {
@@ -108,7 +127,7 @@ router.delete('/product/:id', [verificarAuth, verificaRol], async (req, res) => 
                 mensaje: 'No se encontró el producto indicado'
             });
         }
-        console.log(productDB.fotos);
+
         // Elimina los archivos asociados
         if (productDB.fotos && productDB.fotos.length > 0 && productDB.fotos[0] != 'uploads/default1.jpg') {
             productDB.fotos.forEach(foto => {
