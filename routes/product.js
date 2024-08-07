@@ -175,7 +175,6 @@ router.put('/product/:id', [verificarAuth, verificaRol], upload.array('fotos', 4
                 mensaje: 'No se encontró el producto indicado'
             });
         }
-        console.log(productDB);
         res.json(productDB);
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -186,6 +185,40 @@ router.put('/product/:id', [verificarAuth, verificaRol], upload.array('fotos', 4
             res.status(400).send({ errors: validationErrors });
         } else {
             res.status(500).send({ message: 'Error al actualizar el producto' });
+        }
+    }
+});
+
+// Update state
+router.patch('/product/:id', [verificarAuth, verificaRol], async (req, res) => {
+    const _id = req.params.id;
+    const state = req.body.activo;
+
+    try {
+        const productDB = await Product.findByIdAndUpdate(
+            _id,
+            { $set: { activo: state } },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+        if (!productDB) {
+            return res.status(404).json({
+                mensaje: 'No se encontró el producto indicado'
+            });
+        }
+
+        res.json(productDB);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            const validationErrors = {};
+            for (let field in error.errors) {
+                validationErrors[field] = error.errors[field].message;
+            }
+            res.status(400).send({ errors: validationErrors });
+        } else {
+            res.status(500).send({ message: 'Error al actualizar el producto', error: error.message });
         }
     }
 });
