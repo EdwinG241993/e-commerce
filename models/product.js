@@ -18,6 +18,10 @@ const productSchema = new Schema({
         type: Number,
         required: [true, 'Precio obligatorio']
     },
+    stock: {
+        type: Number,
+        required: [true, 'Stock obligatorio']
+    },
     categoria: {
         type: String,
         required: [true, 'Categoria obligatorio'],
