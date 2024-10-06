@@ -2,24 +2,26 @@ const jwt = require('jsonwebtoken');
 
 let verificarAuth = (req, res, next) => {
 
-    // Read headers
     let token = req.get('token');
 
-    jwt.verify(token, 'secret', (err, decoded) => {
+    if (req.session.userId) {
+        // Read headers
+        jwt.verify(token, 'secret', (err, decoded) => {
+            if (err) {
+                return res.status(401).json({
+                    mensaje: 'Error de token',
+                    err
+                })
+            }
 
-        if (err) {
-            return res.status(401).json({
-                mensaje: 'Error de token',
-                err
-            })
-        }
+            // Create a new property with user info
+            req.usuario = decoded.data;
+            next();
 
-        // Create a new property with user info
-        req.usuario = decoded.data;
-        next();
-
-    });
-
+        });
+    } else {
+        return res.status(401).json({ mensaje: 'No Autorizado' });
+    }
 }
 
 let verificaRol = (req, res, next) => {

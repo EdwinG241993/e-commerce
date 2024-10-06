@@ -3,6 +3,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const app = express();
 
@@ -20,11 +22,31 @@ mongoose.connect(uri).then(
 
 // Middleware
 app.use(morgan('tiny'));
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8080',
+    credentials: true // Enable sending session cookies
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rutas
+//  Session settings
+app.use(session({
+    secret: 'hi7823i238',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: uri,
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        sameSite: 'Lax',  // Required for third-party cookies
+        secure: false       // Only send cookies via HTTPS
+    }
+}));
+
+// Routes
 app.use('/api', require('./routes/product'));
 app.use('/api', require('./routes/user'));
 app.use('/api', require('./routes/login'));
