@@ -2,11 +2,14 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import mongoose from 'mongoose';
 
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const mongoose = require('mongoose');
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -47,12 +50,16 @@ app.use(session({
 }));
 
 // Routes
-app.use('/api', require('./routes/product'));
-app.use('/api', require('./routes/user'));
-app.use('/api', require('./routes/login'));
+import productRoutes from './routes/product.js';
+import userRoutes from './routes/user.js';
+import loginRoutes from './routes/login.js';
+
+app.use('/api', productRoutes);
+app.use('/api', userRoutes);
+app.use('/api', loginRoutes);
 
 // Middleware para Vue.js router modo history
-const history = require('connect-history-api-fallback');
+import history from 'connect-history-api-fallback';
 app.use(history());
 app.use(express.static(path.join(__dirname, 'public')));
 

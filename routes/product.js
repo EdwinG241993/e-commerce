@@ -1,13 +1,13 @@
 import express from 'express';
 import multer from 'multer';
 import sharp from 'sharp';
-import Product from '../models/product';
+import Product from '../models/product.js';
+import fs from 'fs';
+import path from 'path';
+import { verificarAuth, verificaRol } from '../middlewares/autenticacion.js';
 
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
-const { verificarAuth, verificaRol } = require('../middlewares/autenticacion.js');
-const uploadsDir = path.resolve(__dirname, '../');
+const uploadsDir = path.resolve(path.dirname(''), '../');
 const storage = multer.memoryStorage();
 
 const upload = multer({
@@ -224,4 +224,4 @@ router.patch('/product/:id', [verificarAuth, verificaRol], async (req, res) => {
 });
 
 // Export configuration App express
-module.exports = router;
+export default router;

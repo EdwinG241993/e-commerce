@@ -1,11 +1,11 @@
-import User from '../models/user';
+import User from '../models/user.js';
+import _ from 'underscore'; // Filter PUT fields
+import express from 'express';
+import { verificarAuth, verificaRol } from '../middlewares/autenticacion.js';
+import bcrypt from 'bcrypt'; // Hash Pass
 
-const express = require('express');
 const router = express.Router();
-const { verificarAuth, verificaRol } = require('../middlewares/autenticacion.js');
-const bcrypt = require('bcrypt'); // Hash Pass
 const saltRounds = 10;
-const _ = require('underscore'); // Filter PUT fields
 
 // Add user
 router.post('/new-user', async (req, res) => {
@@ -129,4 +129,4 @@ router.delete('/user/:id', [verificarAuth, verificaRol], async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

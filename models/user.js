@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
-const uniqueValidator = require('mongoose-unique-validator');
 
 // Roles
 const roles = {

@@ -1,10 +1,10 @@
-import User from '../models/user';
+import User from '../models/user.js';
+import express from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { verificarAuth } from '../middlewares/autenticacion.js';
 
-const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { verificarAuth } = require('../middlewares/autenticacion.js');
 
 router.post('/login', async (req, res) => {
 
@@ -68,4 +68,4 @@ router.get('/profile', verificarAuth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

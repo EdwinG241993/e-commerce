@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 let verificarAuth = (req, res, next) => {
 
@@ -36,4 +36,4 @@ let verificaRol = (req, res, next) => {
     next();
 }
 
-module.exports = { verificarAuth, verificaRol };
+export { verificarAuth, verificaRol };
